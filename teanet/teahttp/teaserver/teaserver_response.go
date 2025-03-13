@@ -1,0 +1,49 @@
+package teaserver
+
+import (
+	"net/http"
+	"unsafe"
+
+	"github.com/tea-frame-go/tea/teaencoding/teajson"
+	"github.com/tea-frame-go/tea/teaerrors"
+)
+
+type response struct {
+	writer  http.ResponseWriter
+	Request *Request
+}
+
+func (response *response) Writer() http.ResponseWriter {
+	return response.writer
+}
+
+func (response *response) Header() http.Header {
+	return response.writer.Header()
+}
+
+func (response *response) WriteStatus(code int) {
+	text := http.StatusText(code)
+	response.WriteStatusText(code, text)
+}
+
+func (response *response) WriteStatusText(code int, text string) {
+	response.writer.WriteHeader(code)
+	response.Write(unsafe.Slice(unsafe.StringData(text), len(text)))
+}
+
+func (response *response) Write(data []byte) {
+	_, err := response.writer.Write(data)
+	if err != nil {
+		e := teaerrors.New(err)
+		response.Request.server.logger.Error(response.Request.Context(), e.ErrorStack(0))
+	}
+}
+
+func (response *response) WriteJson(data any) {
+	response.Header().Set("Content-Type", "application/json")
+	err := teajson.Encode(response.writer, data)
+	if err != nil {
+		e := teaerrors.New(err)
+		response.Request.server.logger.Error(response.Request.Context(), e.ErrorStack(0))
+	}
+}
