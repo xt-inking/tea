@@ -42,6 +42,7 @@ func (tx *tx) rollback(ctx context.Context) error {
 
 func (tx *tx) tx(ctx context.Context, f func(ctx context.Context) error) error {
 	identifierCount := tx.identifier.Add(1)
+	IdentifierQuoter.QuoteIdentifier(Identifier(strconv.FormatInt(identifierCount, 10)))
 	identifier := Identifier(strconv.FormatInt(identifierCount, 10)).Quote()
 	err := tx.beginSavepoint(ctx, identifier)
 	if err != nil {
