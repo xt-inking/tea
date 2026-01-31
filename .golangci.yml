@@ -1,0 +1,49 @@
+version: "2"
+
+linters:
+  enable:
+    - bodyclose
+    - exhaustive
+    - exhaustruct
+    - fatcontext
+    # - tagalign
+    # ! someone need this //nolint:wrapcheck
+    # - wrapcheck
+  settings:
+    exhaustive:
+      check:
+        - switch
+        - map
+      default-signifies-exhaustive: true
+    exhaustruct:
+      exclude:
+        - '^net\/http\.Server$'
+        - '^github\.com\/bytedance\/sonic\.Config$'
+    tagalign:
+      order:
+        - json
+      strict: true
+    wrapcheck:
+      extra-ignore-sigs:
+        # - .CustomError(
+        # - .SpecificWrap(
+  exclusions:
+    presets:
+      - std-error-handling
+
+formatters:
+  enable:
+    - gci
+    - gofumpt
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        # ! custom your own module
+        # - prefix(github.com/tea-frame-go/tea)
+        - localmodule
+      custom-order: true
+
+issues:
+  fix: true
