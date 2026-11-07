@@ -1,0 +1,43 @@
+version: "2"
+
+linters:
+  enable:
+    - exhaustive
+    - exhaustruct_v5
+    - tagalign
+  settings:
+    exhaustive:
+      check:
+        - switch
+      default-case-required: true
+    exhaustruct_v5:
+      ignore-patterns:
+        - net/http\.Server
+    tagalign:
+      order:
+        - json
+    errcheck:
+      check-blank: true
+      exclude-functions:
+        - (*github.com/xt-inking/tea/internal/bufferpool.Buffer).Write
+        - (*github.com/xt-inking/tea/internal/bufferpool.Buffer).WriteByte
+        - (*github.com/xt-inking/tea/internal/bufferpool.Buffer).WriteString
+  exclusions:
+    presets:
+      - std-error-handling
+
+formatters:
+  enable:
+    - gci
+    - gofumpt
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/xt-inking/tea)
+        - localmodule
+      custom-order: true
+
+issues:
+  fix: false
